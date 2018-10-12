@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.freeter.modules.stock.dao.ViFenceinalarmDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.freeter.modules.stock.entity.ViFenceinalarmEntity" id="viFenceinalarmMap">
+        <result property="id" column="Id"/>
+        <result property="departid" column="departid"/>
+        <result property="dealerid" column="DealerId"/>
+        <result property="dealername" column="DealerName"/>
+        <result property="devicenumber" column="deviceNumber"/>
+        <result property="fencename" column="fencename"/>
+        <result property="alarmtype" column="alarmtype"/>
+        <result property="isread" column="IsRead"/>
+    </resultMap>
+    <select id="selectListView"
+		resultType="com.freeter.modules.stock.entity.view.ViFenceinalarmView" >
+
+		SELECT  viFenceinalarm.* FROM `vi_fenceinalarm`  viFenceinalarm 	        
+        <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+	
+	<select id="selectView"
+		resultType="com.freeter.modules.stock.entity.view.ViFenceinalarmView" >
+		SELECT * FROM `vi_fenceinalarm`  viFenceinalarm <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+</mapper>

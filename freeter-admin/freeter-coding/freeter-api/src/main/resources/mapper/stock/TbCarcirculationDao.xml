@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.freeter.modules.stock.dao.TbCarcirculationDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.freeter.modules.stock.entity.TbCarcirculationEntity" id="tbCarcirculationMap">
+        <result property="id" column="Id"/>
+        <result property="vinnumber" column="VinNumber"/>
+        <result property="circutype" column="CircuType"/>
+        <result property="operateid" column="OperateId"/>
+        <result property="operator" column="Operator"/>
+        <result property="actiontime" column="ActionTime"/>
+        <result property="lastupeate" column="LastUpeate"/>
+        <result property="deleted" column="Deleted"/>
+    </resultMap>
+
+    <select id="selectListView"
+		resultType="com.freeter.modules.stock.entity.view.TbCarcirculationView" >
+
+		SELECT  tbCarcirculation.* FROM `tb_carcirculation`  tbCarcirculation 	        
+        <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+	
+	<select id="selectView"
+		resultType="com.freeter.modules.stock.entity.view.TbCarcirculationView" >
+		SELECT * FROM `tb_carcirculation`  tbCarcirculation <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+</mapper>

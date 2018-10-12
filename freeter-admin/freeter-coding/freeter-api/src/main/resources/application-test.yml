@@ -1,0 +1,49 @@
+spring:
+    datasource:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driverClassName: com.mysql.jdbc.Driver
+        druid:
+            url: jdbc:mysql://rm-bp1244pb26i5l8219i.mysql.rds.aliyuncs.com:3306/stockauditcenter?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
+            username: user_sta
+            password: Lunz2017
+            initial-size: 10
+            max-active: 100
+            min-idle: 10
+            max-wait: 60000
+            pool-prepared-statements: true
+            max-pool-prepared-statement-per-connection-size: 20
+            time-between-eviction-runs-millis: 60000
+            min-evictable-idle-time-millis: 300000
+            validation-query: SELECT 1 FROM DUAL
+            test-while-idle: true
+            test-on-borrow: false
+            test-on-return: false
+            stat-view-servlet:
+                enabled: true
+                url-pattern: /druid/*
+                #login-username: admin
+                #login-password: admin
+            filter:
+                stat:
+                    log-slow-sql: true
+                    slow-sql-millis: 1000
+                    merge-sql: true
+                wall:
+                    config:
+                        multi-statement-allow: true
+
+url :
+  #根据车架号查询车辆定位信息
+  location : http://10.28.36.245/api/obd/vinsnap
+  #原始坐标转地址
+  address : http://baiduwebapi.lunz.cn/api/Redis/OrgSimpleNear?appkey=69800851-4554-4EEC-8D12-E4211B952798
+  #百度坐标转地址
+  baiduaddress : http://baiduwebapi.lunz.cn/api/Redis/SimpleNear?appkey=69800851-4554-4EEC-8D12-E4211B952798
+  #批量转换坐标
+  batchbaiduadress : http://baiduwebapi.lunz.cn/api/Redis/SimpleGoords?appkey=69800851-4554-4EEC-8D12-E4211B952798
+  #轨迹接口
+  arches : http://10.28.36.245/api/obd/arches
+  #批量查询车架号的车辆定位信息
+  batchlocation : http://10.28.36.245/api/obd/batsnap
+  #批量原始坐标转地址
+  orgbatchaddress : http://baiduwebapi.lunz.cn/api/Redis/OrgSimpleNears?appkey=69800851-4554-4EEC-8D12-E4211B952798

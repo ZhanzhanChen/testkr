@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.freeter.modules.stock.dao.TbDealerinfoDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.freeter.modules.stock.entity.TbDealerinfoEntity" id="tbDealerinfoMap">
+        <result property="id" column="Id"/>
+        <result property="deptid" column="DeptId"/>
+        <result property="name" column="Name"/>
+        <result property="grade" column="Grade"/>
+        <result property="procode" column="ProCode"/>
+        <result property="proname" column="ProName"/>
+        <result property="citycode" column="CityCode"/>
+        <result property="cityname" column="CityName"/>
+        <result property="recordaddr" column="RecordAddr"/>
+        <result property="stocknum" column="StockNum"/>
+        <result property="managercode" column="ManagerCode"/>
+        <result property="managername" column="ManagerName"/>
+        <result property="managertel" column="ManagerTel"/>
+        <result property="createdat" column="CreatedAt"/>
+        <result property="lastupdate" column="LastUpdate"/>
+        <result property="deleted" column="Deleted"/>
+    </resultMap>
+
+	
+	<!--查询经销商  -->
+	<select id="selectDealer" resultType="com.freeter.modules.stock.entity.view.TbDealerinfoView">
+	 
+	     SELECT Name,Grade,ProName,RecordAddr,StockNum,ManagerName,ManagerTel from tb_dealerinfo where Deleted = 0
+	 	
+	 	<if test="name != null and name != ''">
+		 AND Name LIKE CONCAT('%',#{name},'%')
+	</if>
+	 	 
+	 	 <if test="proname != null and proname != ''">
+		  AND Proname = #{proname}
+	</if>
+	     
+	     <if test="grade != null and grade != ''">
+		  AND Grade = #{grade}
+	</if>      
+	 	
+	</select>
+	
+	
+
+</mapper>

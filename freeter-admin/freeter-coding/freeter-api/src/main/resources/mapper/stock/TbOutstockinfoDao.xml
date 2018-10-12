@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.freeter.modules.stock.dao.TbOutstockinfoDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+   <!--  <resultMap type="com.freeter.modules.stock.entity.TbOutstockinfoEntity" id="tbOutstockinfoMap">
+        <result property="id" column="Id"/>
+        <result property="dealerid" column="DealerId"/>
+        <result property="dealername" column="DealerName"/>
+        <result property="outstocknum" column="OutStockNum"/>
+        <result property="outstocktime" column="OutStockTime"/>
+        <result property="returnstocktime" column="ReturnStockTime"/>
+        <result property="outstockreason" column="OutStockReason"/>
+        <result property="destinationaddr" column="DestinationAddr"/>
+        <result property="auditstate" column="AuditState"/>
+        <result property="audittime" column="AuditTime"/>
+        <result property="auditremark" column="AuditRemark"/>
+        <result property="remark" column="Remark"/>
+        <result property="createdat" column="CreatedAt"/>
+        <result property="lastupdate" column="LastUpdate"/>
+        <result property="deleted" column="Deleted"/>
+    </resultMap> -->
+    
+    <resultMap type="com.freeter.modules.stock.entity.view.TbOutstockinfoView" id="tbOutstockinfoView">
+		<!-- <id column="did" property="id"/> -->
+		<result column="DealerName" property="dealername"/>
+		<result column="OutStockNum" property="outstocknum"/>
+		<result column="OutStockTime" property="outstocktime"/>
+		<result column="Remark" property="remark"/>
+		<result column="DestinationAddr" property="destinationaddr"/>
+		<result column="ReturnStockTime" property="returnstocktime"/>
+		<result column="AuditState" property="auditstate"/>
+		<result column="AuditRemark" property="auditremark"/>
+		<result column="reason" property="reason"/>
+		<result column="OutStockReason" property="outstockreason"/>
+		<!-- 
+		collection定义关联结合类型的属性的封装规则
+		ofType：指定集合里面元素的类型
+		-->
+		<collection property="list" ofType="com.freeter.modules.stock.entity.view.TbOutstockinfodetailView">
+			<!-- 定义这个集合中元素的封装规则 -->
+			<!-- <id column="eid" property="id"/> -->
+			<result column="CarStatus" property="carstatus"/>
+			<result column="DetailStatus" property="detailstatus"/>
+			<result column="VinNumber" property="vinnumber"/>
+			
+		</collection>
+	
+	</resultMap>
+
+		
+	
+	<select id="selectTbOutstockinfoList" resultType="com.freeter.modules.stock.entity.view.TbOutstockinfoView">
+	 
+	     SELECT tb_outstockinfo.*,tb_dealerinfo.ManagerTel,(CASE tb_outstockinfo.auditstate
+		 WHEN 0 THEN
+			'待处理'
+		 WHEN 1 THEN
+			'通过'
+         else '拒绝'
+         end )OutStockAuditstate from tb_outstockinfo LEFT JOIN tb_dealerinfo
+	     ON tb_outstockinfo.DealerId = tb_dealerinfo.Id 
+	      <where> tb_outstockinfo.Deleted = 0 
+	 	
+	 	    ${ew.sqlSegment} 
+	 	  </where>
+	
+	     ORDER BY auditstate =0 DESC,CreatedAt DESC    
+	 	
+	</select>
+	
+	<select id="selectTbOutstockinfoListExport" resultType="com.freeter.modules.stock.entity.view.TbOutstockinfoView">
+	 
+	     SELECT tb_outstockinfo.*,tb_dealerinfo.ManagerTel,(CASE tb_outstockinfo.auditstate
+		 WHEN 0 THEN
+			'待处理'
+		 WHEN 1 THEN
+			'通过'
+         else '拒绝'
+         end )OutStockAuditstate from tb_outstockinfo LEFT JOIN tb_dealerinfo
+	     ON tb_outstockinfo.DealerId = tb_dealerinfo.Id 
+	       where tb_outstockinfo.Deleted = 0 
+	 	
+	 	<if test="auditstate != null and auditstate != ''">
+		 AND AuditState = #{auditstate}
+	</if> 
+	
+	     ORDER BY auditstate =0 DESC,CreatedAt DESC    
+	 	
+	</select>
+	
+	<select id="selectoutstockinfoListById" resultMap="tbOutstockinfoView">
+	 
+	   SELECT * FROM
+	vi_outstockinfodetail LEFT JOIN tb_outstockinfo ON vi_outstockinfodetail.OutStockId = tb_outstockinfo.Id WHERE
+	OutStockId = #{outStockId} 
+    order by vi_outstockinfodetail.id, vi_outstockinfodetail.vinnumber desc
+	 	
+	</select>
+	
+	<insert id="saveOutstockinfo" parameterType="com.freeter.modules.stock.entity.model.TbOutstockinfoModel">
+        <!-- 跟自增主键方式相比，这里的不同之处只有两点
+                    1  insert语句需要写id字段了，并且 values里面也不能省略
+                    2 selectKey 的order属性需要写成BEFORE 因为这样才能将生成的uuid主键放入到model中，
+                    这样后面的insert的values里面的id才不会获取为空
+              跟自增主键相比就这点区别，当然了这里的获取主键id的方式为 select uuid()
+              当然也可以另写别生成函数。-->
+        <selectKey keyProperty="outstockid" order="BEFORE" resultType="String">
+            SELECT nextval('OS')
+        </selectKey>
+        insert into tb_outstockinfo (Id,DealerId,DepartId,DealerName,OutStockNum,OutStockTime,OutStockReason,Remark,ReturnStockTime,DestinationAddr,AuditState)
+        values (#{outstockid},#{dealerid},#{departid},#{dealername},#{outstocknum},#{outstocktime},#{outstockreason},#{remark},#{returnstocktime},#{destinationaddr},#{auditstate})
+    </insert>
+    
+    
+    <update id="auditOutstockinfo" >
+        update tb_outstockinfo set AuditState = #{auditState} 
+        <if test="auditRemark != null and auditRemark != ''">
+		 , AuditRemark = #{auditRemark}
+	</if>
+        where Id = #{outstockId}
+    </update>
+    
+    <update id="updateCarStatusByOutstock">
+	 update tb_outstockinfodetail set CarStatus = 6
+        
+        where OutStockId = #{outstockId}
+	        
+	 	
+	</update>
+	
+	
+	<select id="selectVinnumberByOutstockId" resultType="java.util.Map">
+	 
+	     SELECT  VinNumber from tb_outstockinfodetail where OutStockId = #{outstockId}
+	 	
+	</select>
+	
+	<select id="selectTimeByVinnumber" resultType="java.util.Map">
+	 
+	     SELECT OutStockTime,ReturnStockTime,VinNumber from vi_outdetailtime where AuditState = 1 and VinNumber in
+	     <foreach item="item" index="index" collection="list"
+      open="(" separator="," close=")">
+        #{item.vinnumber}
+  </foreach>
+	 	
+	</select>
+</mapper>

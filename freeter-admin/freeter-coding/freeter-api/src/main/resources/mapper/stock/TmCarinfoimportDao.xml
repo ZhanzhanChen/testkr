@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.freeter.modules.stock.dao.TmCarinfoimportDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.freeter.modules.stock.entity.view.TmCarinfoimportWrongView" id="importWrong">
+        <result property="rowno" column="RowNo" jdbcType="VARCHAR" />
+        <result property="VinNumber" column="VinNumber" jdbcType="VARCHAR" />
+        <result property="DealerName" column="DealerName" jdbcType="VARCHAR" />
+        <result property="remark" column="Remark" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    
+    <select id="importCarInfo" statementType="CALLABLE" resultMap="importWrong" parameterType="java.util.HashMap">
+   		<![CDATA[
+   		call proc_carinfoimport(1,3)
+   		]]>
+    </select>
+    
+    <select id="selectListView"
+		resultType="com.freeter.modules.stock.entity.view.TmCarinfoimportView" >
+
+		SELECT  tmCarinfoimport.* FROM `tm_carinfoimport`  tmCarinfoimport 	        
+        <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+
+</mapper>

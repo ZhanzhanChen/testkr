@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.freeter.modules.stock.dao.ViCarstatusinfoDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.freeter.modules.stock.entity.ViCarstatusinfoEntity" id="viCarstatusinfoMap">
+        <result property="departid" column="DepartId"/>
+        <result property="dealerid" column="DealerId"/>
+        <result property="rootdealerid" column="RootDealerId"/>
+        <result property="carstatus" column="CarStatus"/>
+        <result property="detailstatus" column="DetailStatus"/>
+        <result property="vinnumber" column="VinNumber"/>
+        <result property="dealername" column="DealerName"/>
+        <result property="fencename" column="FenceName"/>
+        <result property="devicestatus" column="DeviceStatus"/>
+        <result property="devicenumber" column="DeviceNumber"/>
+    </resultMap>
+
+    <select id="selectListView"
+		resultType="com.freeter.modules.stock.entity.view.ViCarstatusinfoView" >
+
+		SELECT  viCarstatusinfo.* FROM `vi_carstatusinfo`  viCarstatusinfo 	        
+        <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+	
+	<select id="selectOneByVinnumber"
+		resultType="com.freeter.modules.stock.entity.ViCarstatusinfoEntity" >
+		SELECT  viCarstatusinfo.devicenumber, viCarstatusinfo.vinnumber, viCarstatusinfo.dealername, viCarstatusinfo.fencename,
+			viCarstatusinfo.carstatus, viCarstatusinfo.detailstatus,viCarstatusinfo.devicestatus,ASTEXT(viCarstatusinfo.FencePolygon) as FencePolygon
+		FROM `vi_carstatusinfo`  viCarstatusinfo 	        
+        <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+	
+	<select id="queryFenceinfoList" resultType="com.freeter.modules.stock.entity.TbFenceinfoEntity">
+		select id,fencename 
+		from tb_fenceinfo
+		<where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+</mapper>

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.freeter.modules.stock.dao.TbFenceinfoDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.freeter.modules.stock.entity.TbFenceinfoEntity" id="tbFenceinfoMap">
+        <result property="id" column="Id"/>
+        <result property="dealerid" column="DealerId"/>
+        <result property="owndealerid" column="OwnDealerId"/>
+        <result property="fencename" column="FenceName"/>
+        <result property="fencepolygon" column="ASTEXT(FencePolygon)"/>
+        <result property="fenceaddr" column="FenceAddr"/>
+        <result property="audittype" column="AuditType"/>
+        <result property="auditstate" column="AuditState"/>
+        <result property="audittime" column="AuditTime"/>
+        <result property="auditremark" column="AuditRemark"/>
+        <result property="isenable" column="IsEnable"/>
+        <result property="createdat" column="CreatedAt"/>
+        <result property="lastupdate" column="LastUpdate"/>
+        <result property="deleted" column="Deleted"/>
+    </resultMap> 
+
+	<select id="selectTbFenceinfoById" resultType="com.freeter.modules.stock.entity.view.TbFenceinfoView" >
+		select ASTEXT(FencePolygon) as fencepolygon,tb_fenceinfo.*,tb_dealerinfo.Name as dealername from tb_fenceinfo,tb_dealerinfo
+		 where tb_fenceinfo.Id = #{id} and tb_fenceinfo.Deleted = 0 and tb_fenceinfo.DealerId = tb_dealerinfo.Id        
+      
+      
+	</select>
+	
+	
+	
+	 <insert id="saveTbFenceinfo" parameterType="com.freeter.modules.stock.entity.TbFenceinfoEntity">
+       
+        <selectKey keyProperty="id" order="BEFORE" resultType="String">
+            SELECT nextval('FC')
+        </selectKey>
+        insert into tb_fenceinfo (Id,DepartId,DealerId,OwnDealerId,FenceName,FencePolygon,FenceAddr,
+        AuditType,AuditState)
+        values (#{id},#{departid},#{dealerid},#{owndealerid},#{fencename},GEOMFROMTEXT(#{fencepolygon}),#{fenceaddr},#{audittype},
+        #{auditstate})
+    </insert>
+   
+   
+    <!--mybatis调用存储过程验证围栏信息-->
+      <select id="callFenceinfo" statementType="CALLABLE" resultType="java.lang.String">
+        call proc_RegFenceDistance (
+         #{fencepolygon,mode=IN,jdbcType=VARCHAR},
+         #{dealerid,mode=IN,jdbcType=VARCHAR}
+        )
+    </select>  
+    <!--mybatis验证围栏是否可以禁用-->
+    <select id="carfence" resultType="java.lang.Integer" >
+		SELECT count(*) FROM tb_carfencestatus WHERE FenceId = #{fenceId} and FenceStatus = 1     
+      
+      
+	</select>
+  
+
+  
+ 
+ <!--分页查询围栏 -->
+	<select id="selectDealerFenceinfoList" resultType="com.freeter.modules.stock.entity.view.TbFenceinfoView">
+	 
+	     SELECT tb_fenceinfo.Id,tb_fenceinfo.FenceName,tb_fenceinfo.FenceAddr,tb_dealerinfo.LevelCode,
+	     tb_fenceinfo.IsEnable,tb_fenceinfo.CreatedAt,tb_fenceinfo.AuditState,tb_dealerinfo.Name as dealerName from tb_fenceinfo left join tb_dealerinfo on tb_fenceinfo.DealerId=tb_dealerinfo.Id where tb_fenceinfo.Deleted = 0 
+	 	
+	 	<if test="fenceName != null and fenceName != ''">
+		 AND FenceName LIKE CONCAT('%',#{fenceName},'%')
+	</if>
+	 	 
+	 	 <if test="dealerName != null and dealerName != ''">
+		  AND tb_dealerinfo.Name LIKE CONCAT('%',#{Name},'%')
+	</if>
+	     
+	     <if test="isEnable != null and isEnable != ''">
+		  AND IsEnable = #{isEnable}
+	</if>  
+	
+	     <if test="ownDealerId != null and ownDealerId != ''">
+		  AND OwnDealerId = #{ownDealerId}
+	</if>
+	
+	     <if test="dealerId != null and dealerId != ''">
+		  AND DealerId = #{dealerId}
+	</if>
+	
+	     ORDER BY  tb_fenceinfo.FenceName   
+	 	
+	</select>
+	
+	<update id="disableTbFenceinfo" >
+        update tb_fenceinfo set IsEnable = #{isEnable} where Id = #{fenceId}
+    </update>
+    
+    <!--根据用户查询经销商id  -->
+    <select id="getDealerIdByUserId" resultType="java.util.HashMap">
+	 
+	       SELECT tb_dealerinfo.Id,tb_dealerinfo.RootDealerId,tb_dealerinfo.Name FROM tb_dealerinfo,sys_user WHERE tb_dealerinfo.DeptId = sys_user.dept_id
+           AND sys_user.user_id = #{userId}  
+	 	
+	</select> 
+	
+	<!--根据用户查询经销商id  -->
+    <select id="getDealerLevelByUserId" resultType="java.util.HashMap">
+	 
+	       SELECT tb_dealerinfo.LevelCode FROM tb_dealerinfo,sys_user WHERE tb_dealerinfo.DeptId = sys_user.dept_id
+           AND sys_user.user_id = #{userId}  
+	 	
+	</select> 
+	
+    <select id="getDealerById" resultType="java.util.HashMap">
+	 
+	       SELECT tb_dealerinfo.RootDealerId,tb_dealerinfo.Name,tb_dealerinfo.DeptId FROM tb_dealerinfo WHERE tb_dealerinfo.Id = #{dealerId}  
+	 	
+	</select>
+     <!--根据用户id查询部门id  -->
+    <select id="getDeptIdByUserId" resultType="java.util.HashMap">
+	 
+	       SELECT dept_id FROM sys_user WHERE sys_user.user_id = #{userId}  
+	 	
+	</select> 
+	
+	
+	<select id="selectFenceinfoList" resultType="com.freeter.modules.stock.entity.view.TbFenceinfoView">
+	 
+	     SELECT tb_fenceinfo.Id,tb_fenceinfo.FenceName,tb_fenceinfo.FenceAddr,tb_dealerinfo.LevelCode,
+	     tb_fenceinfo.IsEnable,tb_fenceinfo.CreatedAt,tb_fenceinfo.AuditState,tb_dealerinfo.Name as dealerName from tb_fenceinfo left join tb_dealerinfo on tb_fenceinfo.DealerId=tb_dealerinfo.Id where tb_fenceinfo.Deleted = 0 
+	 	
+	 	 ${ew.sqlSegment}
+	     
+	     ORDER BY  tb_fenceinfo.FenceName   
+	 	
+	</select>
+	
+	<select id="selectByownDealerId" resultType="com.freeter.modules.stock.entity.TbFenceinfoEntity" >
+		select FenceName,ASTEXT(FencePolygon) as FencePolygon from tb_fenceinfo where OwnDealerId = #{ownDealerId} and IsEnable = 1 and deleted = 0        
+      
+      
+	</select>
+	
+</mapper>

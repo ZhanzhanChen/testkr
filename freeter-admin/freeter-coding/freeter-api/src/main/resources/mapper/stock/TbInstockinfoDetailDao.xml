@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.freeter.modules.stock.dao.TbInstockinfoDetailDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- <resultMap type="com.freeter.modules.pc.entity.TbDealeruleEntity" id="tbDealeruleMap">
+        <result property="id" column="Id"/>
+        <result property="dealerid" column="DealerId"/>
+        <result property="ruletype" column="RuleType"/>
+        <result property="rulevalue" column="RuleValue"/>
+        <result property="ruleunit" column="RuleUnit"/>
+        <result property="createdat" column="CreatedAt"/>
+        <result property="lastupdate" column="LastUpdate"/>
+        <result property="deleted" column="Deleted"/>
+    </resultMap> -->
+
+	
+	
+    
+    
+    <select id="selectinstockinfoDetailListByStatus" resultType="com.freeter.modules.stock.entity.TbInstockinfodetailEntity">
+	 
+	     SELECT
+	tb_carinfo.VinNumber,
+	tb_carinfo.CarStatus,
+	tb_carinfo.ReceiveTime
+    FROM
+	tb_carinfo
+    WHERE
+	tb_carinfo.CarStatus = 1
+    AND tb_carinfo.VinNumber <![CDATA[<>]]> (
+	SELECT
+		VinNumber
+	FROM
+		tb_instockinfodetail
+	WHERE
+		InStockId IN (
+			SELECT
+				Id
+			FROM
+				tb_instockinfo
+			WHERE
+				auditState = 0
+			OR auditState =1
+		)
+	AND tb_instockinfodetail.CarStatus = 1
+    )
+	     ORDER BY tb_carinfo.ReceiveTime DESC    
+	 	
+	</select>
+	
+	
+	
+	<insert id="saveInstockinfoDetail" parameterType="com.freeter.modules.stock.entity.model.TbInstockinfodetailModel">
+       <selectKey keyProperty="id" order="BEFORE" resultType="String">
+            SELECT nextval('ID')
+        </selectKey>  
+         insert into tb_instockinfodetail (Id,InStockId,VinNumber,CarStatus,ReceiveTime) 
+         value(#{id},#{instockid},#{vinnumber},#{detailstatus},#{receivetime})
+        
+     
+    </insert>
+</mapper>

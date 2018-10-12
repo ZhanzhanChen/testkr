@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.freeter.modules.stock.dao.ViCarlocationDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+   <!--  <resultMap type="com.freeter.modules.stock.entity.ViCarlocationEntity" id="viCarlocationMap">
+        <result property="id" column="Id"/>
+        <result property="vinnumber" column="VinNumber"/>
+        <result property="carstatus" column="CarStatus"/>
+        <result property="departid" column="DepartId"/>
+        <result property="dealerid" column="DealerId"/>
+        <result property="dealercode" column="DealerCode"/>
+        <result property="dealername" column="DealerName"/>
+        <result property="receivetime" column="ReceiveTime"/>
+        <result property="repaytime" column="RepayTime"/>
+        <result property="inserttime" column="InsertTime"/>
+        <result property="lastupdate" column="LastUpdate"/>
+        <result property="deleted" column="Deleted"/>
+        <result property="devicenumber" column="DeviceNumber"/>
+        <result property="lastlat" column="LastLat"/>
+        <result property="lastlng" column="LastLng"/>
+        <result property="lastlocattime" column="LastLocatTime"/>
+    </resultMap> -->
+
+	
+</mapper>

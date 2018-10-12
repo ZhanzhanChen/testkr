@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.freeter.modules.sys.dao.SysRoleDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.freeter.modules.sys.entity.SysRoleEntity" id="sysRoleMap">
+        <result property="roleId" column="role_id"/>
+        <result property="roleName" column="role_name"/>
+        <result property="remark" column="remark"/>
+        <result property="deptId" column="dept_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="dataType" column="data_type"/>
+    </resultMap>
+
+    <select id="selectListView"
+		resultType="com.freeter.modules.sys.entity.view.SysRoleView" >
+
+		SELECT  sysRole.* FROM `sys_role`  sysRole 	        
+        <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+	
+	<select id="selectView"
+		resultType="com.freeter.modules.sys.entity.view.SysRoleView" >
+		SELECT * FROM `sys_role`  sysRole <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+</mapper>

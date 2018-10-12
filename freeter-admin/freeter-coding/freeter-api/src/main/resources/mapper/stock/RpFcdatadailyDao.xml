@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.freeter.modules.stock.dao.RpFcdatadailyDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.freeter.modules.stock.entity.RpFcdatadailyEntity" id="rpFcdatadailyMap">
+        <result property="id" column="Id"/>
+        <result property="departid" column="DepartId"/>
+        <result property="dealerid" column="DealerId"/>
+        <result property="dealername" column="DealerName"/>
+        <result property="caroutnum" column="CarOutNum"/>
+        <result property="receivenum" column="ReceiveNum"/>
+        <result property="instocknum" column="InStockNum"/>
+        <result property="outstocknum" column="OutStockNum"/>
+        <result property="viooutstocknum" column="VioOutStockNum"/>
+        <result property="vioinstocknum" column="VioInStockNum"/>
+        <result property="offlinenum" column="OfflineNum"/>
+        <result property="movenum" column="MoveNum"/>
+        <result property="knocknum" column="KnockNum"/>
+        <result property="teardownnum" column="TearDownNum"/>
+        <result property="lowvolnum" column="LowVolNum"/>
+        <result property="lowbatnum" column="LowBatNum"/>
+        <result property="checkdate" column="CheckDate"/>
+        <result property="inserttime" column="InsertTime"/>
+    </resultMap>
+
+    <select id="selectListView"
+		resultType="com.freeter.modules.stock.entity.view.RpFcdatadailyView" >
+
+		SELECT  rpFcdatadaily.* FROM `rp_fcdatadaily`  rpFcdatadaily 	        
+        <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+	
+	<select id="selectView"
+		resultType="com.freeter.modules.stock.entity.view.RpFcdatadailyView" >
+		SELECT * FROM `rp_fcdatadaily`  rpFcdatadaily <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+</mapper>

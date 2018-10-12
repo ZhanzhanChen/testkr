@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.freeter.modules.stock.dao.TbDealerinfoDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.freeter.modules.stock.entity.TbDealerinfoEntity" id="tbDealerinfoMap">
+        <result property="id" column="Id"/>
+        <result property="deptid" column="DeptId"/>
+        <result property="rootdealerid" column="RootDealerId"/>
+        <result property="parentid" column="ParentId"/>
+        <result property="code" column="Code"/>
+        <result property="name" column="Name"/>
+        <result property="grade" column="Grade"/>
+        <result property="procode" column="ProCode"/>
+        <result property="proname" column="ProName"/>
+        <result property="recordaddr" column="RecordAddr"/>
+        <result property="stocknum" column="StockNum"/>
+        <result property="managercode" column="ManagerCode"/>
+        <result property="managername" column="ManagerName"/>
+        <result property="managertel" column="ManagerTel"/>
+        <result property="createdat" column="CreatedAt"/>
+        <result property="lastupdate" column="LastUpdate"/>
+        <result property="deleted" column="Deleted"/>
+    </resultMap>
+
+    <select id="selectListView"
+		resultType="com.freeter.modules.stock.entity.view.TbDealerinfoView" >
+
+		SELECT  tbDealerinfo.* FROM `tb_dealerinfo`  tbDealerinfo 	        
+        <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+	
+	<select id="selectView"
+		resultType="com.freeter.modules.stock.entity.view.TbDealerinfoView" >
+		SELECT * FROM `tb_dealerinfo`  tbDealerinfo <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+	
+	<!--查询经销商  -->
+	<select id="selectDealer" resultType="com.freeter.modules.stock.entity.view.TbDealerinfoView">
+	 
+	     SELECT Name,LevelCode,Id from vi_dealerinfo where Deleted = 0
+	 	
+	 	 ${ew.sqlSegment}
+	
+	 	 
+	 	       
+	 	
+	</select>
+</mapper>

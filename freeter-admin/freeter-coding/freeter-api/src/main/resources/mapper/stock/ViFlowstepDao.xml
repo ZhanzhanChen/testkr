@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.freeter.modules.stock.dao.ViFlowstepDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.freeter.modules.stock.entity.ViFlowstepEntity" id="viFlowstepMap">
+        <result property="stepid" column="stepid"/>
+        <result property="flowid" column="flowid"/>
+        <result property="actionid" column="actionid"/>
+        <result property="flowtile" column="flowtile"/>
+        <result property="actiontitle" column="actiontitle"/>
+        <result property="orderno" column="orderno"/>
+        <result property="typeno" column="typeno"/>
+        <result property="flag" column="flag"/>
+        <result property="preno" column="preno"/>
+        <result property="pretitle" column="pretitle"/>
+        <result property="departid" column="departid"/>
+    </resultMap>
+    <select id="selectListView"
+		resultType="com.freeter.modules.stock.entity.view.ViFlowstepView" >
+
+		SELECT  viFlowstep.* FROM `vi_flowstep`  viFlowstep 	        
+        <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+	
+	<select id="selectView"
+		resultType="com.freeter.modules.stock.entity.view.ViFlowstepView" >
+		SELECT * FROM `vi_flowstep`  viFlowstep <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+</mapper>

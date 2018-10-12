@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.freeter.modules.stock.dao.BasicDistrictDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.freeter.modules.stock.entity.BasicDistrictEntity" id="basicDistrictMap">
+        <result property="id" column="Id"/>
+        <result property="code" column="Code"/>
+        <result property="name" column="Name"/>
+        <result property="parentid" column="ParentId"/>
+        <result property="parentcode" column="ParentCode"/>
+        <result property="parentname" column="ParentName"/>
+        <result property="levelno" column="LevelNo"/>
+        <result property="sortorder" column="SortOrder"/>
+        <result property="deleted" column="Deleted"/>
+    </resultMap>
+
+	<select id="selectListByLevelNo" resultType="com.freeter.modules.stock.entity.BasicDistrictEntity">
+        select Code,Name from basic_district where LevelNo = #{levelno} and Deleted = 0
+    </select>
+	
+</mapper>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.freeter.modules.stock.dao.TbInstockinfoDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- <resultMap type="com.freeter.modules.stock.entity.TbInstockinfoEntity" id="tbInstockinfoMap">
+        <result property="id" column="Id"/>
+        <result property="dealerid" column="DealerId"/>
+        <result property="owndealerid" column="OwnDealerId"/>
+        <result property="fencename" column="FenceName"/>
+        <result property="fencepolygon" column="ASTEXT(FencePolygon)"/>
+        <result property="fenceaddr" column="FenceAddr"/>
+        <result property="audittype" column="AuditType"/>
+        <result property="auditstate" column="AuditState"/>
+        <result property="audittime" column="AuditTime"/>
+        <result property="auditremark" column="AuditRemark"/>
+        <result property="isenable" column="IsEnable"/>
+        <result property="createdat" column="CreatedAt"/>
+        <result property="lastupdate" column="LastUpdate"/>
+        <result property="deleted" column="Deleted"/>
+    </resultMap>  -->
+    <resultMap type="com.freeter.modules.stock.entity.view.TbInstockinfoView" id="tbInstockinfoView">
+		<!-- <id column="did" property="id"/> -->
+		<result column="DealerName" property="dealername"/>
+		<result column="InStockNum" property="instocknum"/>
+		<result column="InStockTime" property="instocktime"/>
+		<result column="Remark" property="remark"/>
+		<result column="AuditRemark" property="auditremark"/>
+		<result column="AuditState" property="auditstate"/>
+		<result column="reason" property="reason"/>
+		
+		
+		<!-- 
+		collection定义关联结合类型的属性的封装规则
+		ofType：指定集合里面元素的类型
+		-->
+		<collection property="list" ofType="com.freeter.modules.stock.entity.view.TbInstockinfodetailView">
+			<!-- 定义这个集合中元素的封装规则 -->
+			<!-- <id column="eid" property="id"/> -->
+			<result column="CarStatus" property="carstatus"/>
+			<result column="DetailStatus" property="detailstatus"/>
+			<result column="ReceiveTime" property="receivetime"/>
+			<result column="VinNumber" property="vinnumber"/>
+		</collection>
+	
+	</resultMap>
+	
+	<select id="selectTbInstockinfoList" resultType="com.freeter.modules.stock.entity.view.TbInstockinfoView">
+	 
+	     SELECT tb_instockinfo.*,(CASE tb_instockinfo.auditstate
+		 WHEN 0 THEN
+			'待处理'
+		 WHEN 1 THEN
+			'通过'
+         else '拒绝'
+         end )InStockAuditstate,sys_dict.value as reason  from tb_instockinfo,sys_dict where Deleted = 0 
+	     and sys_dict.code =tb_instockinfo.InStockReason AND sys_dict.type= 'instockreason'
+	 	
+	 	 ${ew.sqlSegment}
+	     ORDER BY auditstate =0 DESC, CreatedAt DESC    
+	 	
+	</select>
+    
+     <select id="selectinstockinfoListById" resultMap="tbInstockinfoView">
+	 
+	   SELECT
+	tb_instockinfo.DealerName,
+	tb_instockinfo.InStockNum,
+	tb_instockinfo.InStockTime,
+	tb_instockinfo.Remark,
+	tb_instockinfo.AuditState,
+	tb_instockinfo.AuditRemark,
+	vi_instockinfodetail.CarStatus,
+	vi_instockinfodetail.DetailStatus,
+	vi_instockinfodetail.ReceiveTime,
+	vi_instockinfodetail.VinNumber,
+	sys_dict.value as reason
+
+    FROM
+	vi_instockinfodetail
+    LEFT JOIN tb_instockinfo ON tb_instockinfo.Id = vi_instockinfodetail.InStockId
+     LEFT JOIN sys_dict ON sys_dict.`code` = tb_instockinfo.instockreason 
+    WHERE  Deleted = 0 and
+	tb_instockinfo.Id = #{instockId}
+     AND sys_dict.type = 'instockreason' 
+             
+	 	
+	</select>
+	
+	
+	
+	<insert id="saveInstockinfo" parameterType="com.freeter.modules.stock.entity.model.TbInstockinfoModel">
+        <!-- 跟自增主键方式相比，这里的不同之处只有两点
+                    1  insert语句需要写id字段了，并且 values里面也不能省略
+                    2 selectKey 的order属性需要写成BEFORE 因为这样才能将生成的uuid主键放入到model中，
+                    这样后面的insert的values里面的id才不会获取为空
+              跟自增主键相比就这点区别，当然了这里的获取主键id的方式为 select uuid()
+              当然也可以另写别生成函数。-->
+        <selectKey keyProperty="instockid" order="BEFORE" resultType="String">
+            SELECT nextval('IS')
+        </selectKey>
+        insert into tb_instockinfo (Id,DepartId,DealerId,DealerName,InStockNum,InStockTime,InStockReason,Remark,AuditState)
+        values (#{instockid},#{departid},#{dealerid},#{dealername},#{instocknum},#{instocktime},#{instockreason},#{remark},#{auditstate})
+    </insert>
+	
+	
+	
+	<update id="auditInstockinfo" >
+        update tb_instockinfo set AuditState = #{auditState} 
+        <if test="auditRemark != null and auditRemark != ''">
+		 , AuditRemark = #{auditRemark}
+	</if>
+        where Id = #{instockId}
+    </update>
+    
+    <update id="updateCarStatusByInstock">
+	 update tb_instockinfodetail set CarStatus = 2
+        
+        where InStockId = #{instockId}
+	        
+	 	
+	</update>
+	
+	
+	<select id="selectVinnumberByInstockId" resultType="java.util.Map">
+	 
+	     SELECT  VinNumber from tb_instockinfodetail where InStockId = #{instockId}
+	 	
+	</select>
+	
+   
+</mapper>

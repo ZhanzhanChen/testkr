@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.freeter.modules.stock.dao.TbFenceinfoDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- <resultMap type="com.freeter.modules.pc.entity.TbFenceinfoEntity" id="tbFenceinfoMap">
+        <result property="id" column="Id"/>
+        <result property="dealerid" column="DealerId"/>
+        <result property="owndealerid" column="OwnDealerId"/>
+        <result property="fencename" column="FenceName"/>
+        <result property="fencepolygon" column="FencePolygon"/>
+        <result property="fenceaddr" column="FenceAddr"/>
+        <result property="audittype" column="AuditType"/>
+        <result property="auditstate" column="AuditState"/>
+        <result property="audittime" column="AuditTime"/>
+        <result property="auditremark" column="AuditRemark"/>
+        <result property="isenable" column="IsEnable"/>
+        <result property="createdat" column="CreatedAt"/>
+        <result property="lastupdate" column="LastUpdate"/>
+        <result property="deleted" column="Deleted"/>
+    </resultMap> -->
+
+	<select id="selectTbFenceinfoById"
+		resultType="com.freeter.modules.stock.entity.TbFenceinfoEntity" >
+		select * from tb_fenceinfo where Id = #{id} and Deleted = 0         
+      
+	</select>
+	
+	
+	
+	 <insert id="saveTbFenceinfo" parameterType="com.freeter.modules.stock.entity.TbFenceinfoEntity">
+       
+        <selectKey keyProperty="id" order="BEFORE" resultType="String">
+            SELECT nextval('DI')
+        </selectKey>
+        insert into tb_fenceinfo (Id,DealerId,OwnDealerId,FenceName,FenceAddr,
+        AuditType,AuditState,AuditTime,AuditRemark)
+        values (#{id},#{dealerid},#{owndealerid},#{fencename},#{fenceaddr},#{audittype},
+        #{auditstate},#{audittime},#{auditremark})
+    </insert>
+    <!--FencePolygon, #{fencepolygon}, -->
+    <!--mybatis调用存储过程-->
+     <select id="callFenceinfo" statementType="CALLABLE">
+        call proc_RegFenceDistance (
+         #{fencepolygon,mode=IN,jdbcType=VARCHAR},
+         #{dealerid,mode=IN,jdbcType=VARCHAR}
+         
+        
+        )
+    </select>
+     <!-- <select id="callFenceinfo" parameterType="map" statementType="CALLABLE" resultType="string">
+
+  
+
+  <![CDATA[  
+
+    {call proc_RegFenceDistance(#{fencepolygon,mode=IN,jdbcType=VARCHAR},
+    #{dealerid,mode=IN,jdbcType=CHAR},#{result,mode=OUT,jdbcType=VARCHAR})}
+  ]]>  
+
+  
+
+  </select>
+ -->
+ 
+ <!--分页查询围栏 -->
+	<select id="selectFenceinfoList" resultType="com.freeter.modules.stock.entity.view.TbFenceinfoView">
+	 
+	     SELECT * from tb_fenceinfo where Deleted = 0
+	 	
+	 	<if test="fencename != null and fencename != ''">
+		 AND FenceName LIKE CONCAT('%',#{fencename},'%')
+	</if>
+	 	 
+	 	 <if test="auditstate != null and auditstate != ''">
+		  AND AuditState = #{auditstate}
+	</if>
+	     
+	     <if test="isenable != null and isenable != ''">
+		  AND IsEnable = #{isenable}
+	</if>  
+	     ORDER BY CreatedAt DESC    
+	 	
+	</select>
+	
+	
+</mapper>

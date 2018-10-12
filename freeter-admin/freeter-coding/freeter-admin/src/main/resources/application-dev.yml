@@ -1,0 +1,63 @@
+#热部署生效 
+
+spring:
+    datasource:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driverClassName: com.mysql.jdbc.Driver
+        druid:
+            first:  #数据源1
+                url: jdbc:mysql://localhost:3306/cnadmart?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
+                username: root
+                password: 12345
+                 
+#                url: jdbc:mysql://rm-bp1244pb26i5l8219i.mysql.rds.aliyuncs.com:3306/stockauditcenter?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
+#                username: user_sta
+#                password: Lunz2017
+
+            initial-size: 10
+            max-active: 100
+            min-idle: 10
+            max-wait: 60000
+            pool-prepared-statements: true
+            max-pool-prepared-statement-per-connection-size: 20
+            time-between-eviction-runs-millis: 60000
+            min-evictable-idle-time-millis: 300000
+            #validation-query: SELECT 1 FROM DUAL
+            test-while-idle: true
+            test-on-borrow: false
+            test-on-return: false
+            stat-view-servlet:
+                enabled: true
+                url-pattern: /druid/*
+                #login-username: admin
+                #login-password: admin
+            filter:
+                stat:
+                    log-slow-sql: true
+                    slow-sql-millis: 1000
+                    merge-sql: false
+                wall:
+                    config:
+                        multi-statement-allow: true
+                        
+#============== kafka ===================
+    kafka:
+        consumer:
+            servers : 192.168.6.21:9092,192.168.6.22:9092,192.168.6.23:9092
+            enable.auto.commit : false
+            session.timeout : 15000
+            auto.commit.interval : 1000
+            auto.offset.reset : earliest
+            group.id : kafka-consumer-group
+            concurrency : 1
+            maxPollRecordsConfig : 1
+#      bootstrap-servers: 192.168.6.21:9092
+#      consumer:
+#        group-id: kafka-consumer-group
+#        auto-offset-reset: earliest
+#        enable-auto-commit: false
+#        auto-commit-interval: 100
+#        session-timeout : 15000
+#        concurrency : 10
+#        maxPollRecordsConfig : 5
+#        BatchListener : true

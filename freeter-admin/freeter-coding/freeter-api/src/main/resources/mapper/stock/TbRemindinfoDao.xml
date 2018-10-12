@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.freeter.modules.stock.dao.TbRemindinfoDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.freeter.modules.stock.entity.TbRemindinfoEntity" id="tbRemindinfoMap">
+        <result property="id" column="Id"/>
+        <result property="deptid" column="DeptId"/>
+        <result property="dealerid" column="DealerId"/>
+        <result property="dealername" column="DealerName"/>
+        <result property="vinnumber" column="VinNumber"/>
+        <result property="devicenumber" column="DeviceNumber"/>
+        <result property="devicelat" column="DeviceLat"/>
+        <result property="devicelng" column="DeviceLng"/>
+        <result property="remindtype" column="RemindType"/>
+        <result property="remindstatus" column="RemindStatus"/>
+        <result property="remindtime" column="RemindTime"/>
+        <result property="isread" column="IsRead"/>
+        <result property="remark" column="Remark"/>
+        <result property="inserttime" column="InsertTime"/>
+        <result property="lastupdate" column="LastUpdate"/>
+        <result property="deleted" column="Deleted"/>
+    </resultMap>
+    <select id="selectListView"
+		resultType="com.freeter.modules.stock.entity.view.TbRemindinfoView" >
+
+		SELECT  tbRemindinfo.* FROM `tb_remindinfo`  tbRemindinfo 	        
+        <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+	
+	<select id="selectView"
+		resultType="com.freeter.modules.stock.entity.view.TbRemindinfoView" >
+		SELECT * FROM `tb_remindinfo`  tbRemindinfo <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+	
+	
+	<update id="batchUpdate" parameterType="java.util.List"> 
+	  <foreach collection="list" item="item" index="index" open="" close="" separator=";"> 
+	   update tb_devicestatus  
+	      <set> 
+	      devicestatus=#{item.devicestatus}
+	      </set> 
+	      where vinnumber = #{item.vinnumber} 
+	  </foreach> 
+	</update>
+	
+
+
+</mapper>

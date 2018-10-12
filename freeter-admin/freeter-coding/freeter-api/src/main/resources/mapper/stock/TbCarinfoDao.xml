@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.freeter.modules.stock.dao.TbCarinfoDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- <resultMap type="com.freeter.modules.stock.entity.TbCarinfoEntity" id="tbCarinfoMap">
+        <result property="id" column="Id"/> 
+        <result property="vinnumber" column="VinNumber"/>
+        <result property="carstatus" column="CarStatus"/>
+        <result property="departid" column="DepartId"/>
+        <result property="dealerid" column="DealerId"/>
+        <result property="dealercode" column="DealerCode"/>
+        <result property="dealername" column="DealerName"/>
+        <result property="receivetime" column="ReceiveTime"/>
+        <result property="repaytime" column="RepayTime"/>
+        <result property="inserttime" column="InsertTime"/>
+        <result property="lastupdate" column="LastUpdate"/>
+        <result property="deleted" column="Deleted"/>
+    </resultMap> -->
+
+	
+	
+	    <select id="selectListView"
+		resultType="com.freeter.modules.stock.entity.view.TbCarinfoView" >
+
+		SELECT  tbCarinfo.* FROM tb_carinfo  tbCarinfo 	        
+        <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+	
+	<select id="selectView"
+		resultType="com.freeter.modules.stock.entity.view.TbCarinfoView" >
+		SELECT * FROM tb_carinfo  tbCarinfo <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+	
+	<insert id="insertEntityList" parameterType="java.util.List">
+		insert into tb_carinfo(id,VinNumber, CarStatus, DepartId, dealerid, DealerCode, DealerName) 
+		select nextval('TC'),A.* from(
+		<foreach collection="list" item="item" index="index" separator="UNION ALL">
+			select #{item.vinnumber} as vinnumber,#{item.carstatus} as carstatus,#{item.departid} as departid
+				  ,#{item.dealerid} as dealerid,#{item.dealercode} as dealercode,#{item.dealername} as dealername
+			from dual
+		</foreach>) A
+	</insert>
+	
+	
+	<select id="selectCarinfoListByStatus" resultType="com.freeter.modules.stock.entity.model.TbCarModel">
+	 SELECT vi_instockselect.* FROM
+	 vi_instockselect
+    
+	 <where>
+    ${ew.sqlSegment}
+	</where>
+	 
+	 
+	     ORDER BY vi_instockselect.ReceiveTime DESC    
+	 	 
+	</select>
+	
+	<select id="selectCarOutstockinfoListByStatus" resultType="com.freeter.modules.stock.entity.model.TbCarModel">
+	 
+	    SELECT
+        vi_outstockselect.*
+        FROM
+        vi_outstockselect
+	 <where>
+    ${ew.sqlSegment}
+	</where>
+	 
+	    <!--  ORDER BY vi_outstockselect.ReceiveTime DESC  -->   
+	 	 
+	</select>
+	
+	<update id="updateCarStatusByVinnumber" parameterType="java.util.List">
+	 
+        <foreach collection="list" separator=";" item="item">
+           update tb_carinfo set CarStatus = 2
+            
+           where VinNumber = #{item.VinNumber}
+        </foreach>
+	        
+	 	
+	</update>
+	
+	<update id="outstockupdateCarStatusByVinnumber" parameterType="java.util.List">
+	 
+        <foreach collection="list" separator=";" item="item">
+           update tb_carinfo set CarStatus = 6
+            
+           where VinNumber = #{item.VinNumber}
+        </foreach>
+	        
+	 	
+	</update>
+</mapper>
